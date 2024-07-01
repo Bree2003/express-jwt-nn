@@ -1,5 +1,6 @@
 import express from "express";
 import { Sequelize } from "sequelize";
+import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 
@@ -25,5 +26,6 @@ try {
 // routes
 app.get("/", (req, res) => res.render("home"));
 app.get("/smoothies", (req, res) => res.render("smoothies"));
+app.use(authRoutes);
 
 app.listen(3000);
