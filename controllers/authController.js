@@ -9,6 +9,7 @@ const authController = {
     res.render("login");
   },
   loginPOST: (req, res) => {
+    console.log(req.body);
     res.send("user login");
   },
 };
