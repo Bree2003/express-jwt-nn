@@ -1,9 +1,17 @@
+import User from "../models/User.js";
+
 const authController = {
   signupGET: (req, res) => {
-    res.render("signup");
+    res.render("signupjaa");
   },
-  signupPOST: (req, res) => {
-    res.send("new signup");
+  signupPOST: async (req, res) => {
+    const { email, password } = req.body;
+    try {
+      const user = await User.create({ email, password });
+      res.status(201).json(user);
+    } catch (error) {
+      res.status(400).send("error, user nor created");
+    }
   },
   loginGET: (req, res) => {
     res.render("login");
