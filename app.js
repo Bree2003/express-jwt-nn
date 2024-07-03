@@ -29,7 +29,7 @@ app.get("/set-cookies", (req, res) => {
     maxAge: 1000 * 60 * 60 * 24,
     httpOnly: true,
   }); /* a day */
-  res.send("You got the cookies!");
+  res.send("You got the cookies!!");
 });
 app.get("/get-cookies", (req, res) => {
   const cookies = req.cookies;

@@ -6,12 +6,12 @@ export const sequelize = new Sequelize("example", "root", "root", {
   dialect: "mysql",
 });
 
-export const connection = () => {
+export const connection = async () => {
   try {
-    sequelize.authenticate();
+    await sequelize.authenticate();
     console.log("Connection has been established successfully.");
 
-    sequelize.sync();
+    await sequelize.sync();
     console.log("database synchornized");
   } catch (error) {
     console.error("Unable to connect to the database:", error);

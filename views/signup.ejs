@@ -1,6 +1,6 @@
 <%- include ('partials/header'); -%>
 
-<form action="/" method="post">
+<form id="signup-form" action="/signup" method="post">
   <h1>Sign up</h1>
   <label for="email">Email</label>
   <input type="email" name="email" required />
@@ -8,21 +8,32 @@
   <label for="password">Password</label>
   <input type="password" name="password" required />
   <div class="password error"></div>
-  <!-- it's not necessary to put the type:submit because button already does the event -->
   <button type="submit">Sign Up</button>
 </form>
 
 <script>
-  const form = document.querySelector("form");
-  form.addEventListener("submit", (e) => {
-    // the default action is the page refreshing and we don't want that to happen
+  const form = document.querySelector("#signup-form");
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // get the values, you can select them by the attribute name
     const email = form.email.value;
     const password = form.password.value;
 
-    console.log(email, password);
+    try {
+      const res = await fetch("/signup", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await res.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   });
 </script>
+
 <%- include('partials/footer'); -%>

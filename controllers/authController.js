@@ -1,10 +1,18 @@
+import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 
 const handleErrors = (err) => {
   console.log(err.message, err.code);
 };
-//
+
+const maxAge = 3 * 24 * 60 * 60; /* three days */
+
+const createToken = (id) => {
+  return jwt.sign({ id }, "net ninja secret", {
+    expiresIn: maxAge,
+  });
+};
 
 const authController = {
   signupGET: (req, res) => {
@@ -12,14 +20,15 @@ const authController = {
   },
   signupPOST: async (req, res) => {
     const { email, password } = req.body;
-    // geneeración de salt para la contraseña
     const newPassword = await bcrypt.hash(password, 10);
     try {
       const user = await User.create({ email, password: newPassword });
-      res.status(201).json(user);
+      const token = createToken(user.id);
+      res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+      res.status(201).json({ user: user.id });
     } catch (error) {
       handleErrors(error);
-      res.status(400).send("error, user nor created");
+      res.status(400).send(`Error, user not created: ${error.message}`);
     }
   },
   loginGET: (req, res) => {
@@ -27,7 +36,7 @@ const authController = {
   },
   loginPOST: (req, res) => {
     console.log(req.body);
-    res.send("user login");
+    res.send("User login");
   },
 };
 
