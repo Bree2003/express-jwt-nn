@@ -49,4 +49,18 @@ const User = sequelize.define(
   }
 );
 
+// Static method to login user
+User.login = async function (email, password) {
+  const user = await User.findOne({ where: { email } });
+  console.log(user);
+  if (user) {
+    const auth = await bcrypt.compare(password, user.password);
+    if (auth) {
+      return user;
+    }
+    throw new Error("Incorrect password");
+  }
+  throw new Error("Incorrect email");
+};
+
 export default User;

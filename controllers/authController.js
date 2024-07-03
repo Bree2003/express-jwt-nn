@@ -52,9 +52,14 @@ const authController = {
   loginGET: (req, res) => {
     res.render("login");
   },
-  loginPOST: (req, res) => {
-    console.log(req.body);
-    res.send("User login");
+  loginPOST: async (req, res) => {
+    const { email, password } = req.body;
+    try {
+      const user = await User.login(email, password);
+      res.status(200).json({ user: user.id });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
   },
 };
 
