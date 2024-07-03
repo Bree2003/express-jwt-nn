@@ -1,4 +1,6 @@
 import User from "../models/User.js";
+import bcrypt from "bcrypt";
+
 const handleErrors = (err) => {
   console.log(err.message, err.code);
 };
@@ -6,12 +8,14 @@ const handleErrors = (err) => {
 
 const authController = {
   signupGET: (req, res) => {
-    res.render("signupjaa");
+    res.render("signup");
   },
   signupPOST: async (req, res) => {
     const { email, password } = req.body;
+    // geneeración de salt para la contraseña
+    const newPassword = await bcrypt.hash(password, 10);
     try {
-      const user = await User.create({ email, password });
+      const user = await User.create({ email, password: newPassword });
       res.status(201).json(user);
     } catch (error) {
       handleErrors(error);

@@ -1,5 +1,28 @@
 <%- include ('partials/header'); -%>
 
-<h1>Sign up</h1>
+<form action="/" method="post">
+  <h1>Sign up</h1>
+  <label for="email">Email</label>
+  <input type="email" name="email" required />
+  <div class="email error"></div>
+  <label for="password">Password</label>
+  <input type="password" name="password" required />
+  <div class="password error"></div>
+  <!-- it's not necessary to put the type:submit because button already does the event -->
+  <button type="submit">Sign Up</button>
+</form>
 
+<script>
+  const form = document.querySelector("form");
+  form.addEventListener("submit", (e) => {
+    // the default action is the page refreshing and we don't want that to happen
+    e.preventDefault();
+
+    // get the values, you can select them by the attribute name
+    const email = form.email.value;
+    const password = form.password.value;
+
+    console.log(email, password);
+  });
+</script>
 <%- include('partials/footer'); -%>
