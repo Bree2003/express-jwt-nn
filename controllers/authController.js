@@ -1,9 +1,28 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-import bcrypt from "bcrypt";
 
-const handleErrors = (err) => {
-  console.log(err.message, err.code);
+// Función para manejar errores de Sequelize
+const handleSequelizeError = (err) => {
+  console.log(err.message, err.name);
+  let errors = { email: "", password: "" };
+
+  if (err.name === "SequelizeUniqueConstraintError") {
+    if (err.fields.email) {
+      errors.email = "That email is already registered";
+    }
+  } else if (err.name === "SequelizeValidationError") {
+    err.errors.forEach((error) => {
+      console.log(error);
+      if (error.path === "email") {
+        errors.email = error.message;
+      }
+      if (error.path === "password") {
+        errors.password = error.message;
+      }
+    });
+  }
+
+  return errors;
 };
 
 const maxAge = 3 * 24 * 60 * 60; /* three days */
@@ -20,15 +39,14 @@ const authController = {
   },
   signupPOST: async (req, res) => {
     const { email, password } = req.body;
-    const newPassword = await bcrypt.hash(password, 10);
     try {
-      const user = await User.create({ email, password: newPassword });
+      const user = await User.create({ email, password });
       const token = createToken(user.id);
       res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
       res.status(201).json({ user: user.id });
     } catch (error) {
-      handleErrors(error);
-      res.status(400).send(`Error, user not created: ${error.message}`);
+      const errors = handleSequelizeError(error);
+      res.status(400).json({ errors });
     }
   },
   loginGET: (req, res) => {
