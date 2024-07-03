@@ -1,4 +1,8 @@
 import User from "../models/User.js";
+const handleErrors = (err) => {
+  console.log(err.message, err.code);
+};
+//
 
 const authController = {
   signupGET: (req, res) => {
@@ -10,6 +14,7 @@ const authController = {
       const user = await User.create({ email, password });
       res.status(201).json(user);
     } catch (error) {
+      handleErrors(error);
       res.status(400).send("error, user nor created");
     }
   },
