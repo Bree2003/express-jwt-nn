@@ -37,11 +37,14 @@
       // }
       const data = await res.json();
       console.log(data);
-      if (data.error == "Incorrect email") {
-        emailError.textContent = data.error;
-      }
-      if (data.error == "Incorrect password") {
-        passwordError.textContent = data.error;
+      // Check for errors
+      if (data.errors) {
+        if (data.errors.email) {
+          emailError.textContent = data.errors.email;
+        }
+        if (data.errors.password) {
+          passwordError.textContent = data.errors.password;
+        }
       }
 
       if (data.user) {

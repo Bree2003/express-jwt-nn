@@ -6,7 +6,16 @@ const handleSequelizeError = (err) => {
   console.log(err.message, err.name);
   let errors = { email: "", password: "" };
 
+  // incorrect email
+  if (err.message === "Incorrect email") {
+    errors.email = "That email is not registered";
+  }
+  // incorrect password
+  if (err.message === "Incorrect password") {
+    errors.password = "That password is incorrect";
+  }
   if (err.name === "SequelizeUniqueConstraintError") {
+    // unique email
     if (err.fields.email) {
       errors.email = "That email is already registered";
     }
@@ -56,9 +65,12 @@ const authController = {
     const { email, password } = req.body;
     try {
       const user = await User.login(email, password);
+      const token = createToken(user.id);
+      res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
       res.status(200).json({ user: user.id });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      const errors = handleSequelizeError(error);
+      res.status(400).json({ errors });
     }
   },
 };
