@@ -2,6 +2,7 @@ import express from "express";
 import authRoutes from "./routes/authRoutes.js";
 import { connection } from "./database/connection.js";
 import cookieParser from "cookie-parser";
+import requireAuth from "./middleware/authMiddleware.js";
 
 const app = express();
 
@@ -15,7 +16,7 @@ app.set("view engine", "ejs");
 
 // routes
 app.get("/", (req, res) => res.render("home"));
-app.get("/smoothies", (req, res) => res.render("smoothies"));
+app.get("/smoothies", requireAuth, (req, res) => res.render("smoothies"));
 app.use(authRoutes);
 
 // cookies
